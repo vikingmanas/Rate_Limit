@@ -1,5 +1,7 @@
 # 🛡️ Distributed Rate Limiter — API Protection System
 
+### 🌐 [Live Demo → https://rate-limiter-6p3t.onrender.com](https://rate-limiter-6p3t.onrender.com)
+
 > **Why I Built This:** Every large-scale API — from Twitter to Stripe to OpenAI — needs a rate limiter. Without one, a single abusive user or bot can bring down your entire service. I built this project to deeply understand how rate limiting actually works under the hood: the algorithms, the concurrency challenges, and how to scale it across distributed servers using Redis. It's the kind of invisible infrastructure that powers the internet, and I wanted to build it from scratch instead of just using a library.
 
 ---

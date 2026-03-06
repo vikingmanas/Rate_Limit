@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rate Limiter — Monitoring Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
     <div class="dashboard">
         <!-- Header -->
         <header class="header">
             <div class="header-left">
                 <div class="logo">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                        <rect rx="8" width="32" height="32" fill="url(#grad)"/>
-                        <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <defs><linearGradient id="grad" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                        <rect rx="10" width="36" height="36" fill="url(#grad)" />
+                        <path d="M11 18L15 22L25 12" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <defs>
+                            <linearGradient id="grad" x1="0" y1="0" x2="36" y2="36">
+                                <stop stop-color="#6366f1" />
+                                <stop offset="1" stop-color="#a855f7" />
+                            </linearGradient>
+                        </defs>
                     </svg>
-                    <h1>Rate Limiter Dashboard</h1>
+                    <div>
+                        <h1>Rate Limiter Dashboard</h1>
+                        <span class="subtitle">Real-time API Protection Monitoring</span>
+                    </div>
                 </div>
-                <span class="subtitle">Real-time API Protection Monitoring</span>
             </div>
             <div class="header-right">
                 <div class="status-badge" id="redisStatus">
@@ -34,31 +46,152 @@
         <!-- Summary Cards -->
         <section class="cards">
             <div class="card card-total">
-                <div class="card-icon">📊</div>
+                <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M18 20V10M12 20V4M6 20v-6" />
+                    </svg></div>
                 <div class="card-body">
                     <span class="card-value" id="totalRequests">0</span>
                     <span class="card-label">Total Requests</span>
                 </div>
             </div>
             <div class="card card-allowed">
-                <div class="card-icon">✅</div>
+                <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg></div>
                 <div class="card-body">
                     <span class="card-value" id="allowedRequests">0</span>
                     <span class="card-label">Allowed</span>
                 </div>
             </div>
             <div class="card card-blocked">
-                <div class="card-icon">🚫</div>
+                <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                    </svg></div>
                 <div class="card-body">
                     <span class="card-value" id="blockedRequests">0</span>
                     <span class="card-label">Blocked</span>
                 </div>
             </div>
             <div class="card card-rate">
-                <div class="card-icon">📈</div>
+                <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                        <polyline points="17 6 23 6 23 12" />
+                    </svg></div>
                 <div class="card-body">
                     <span class="card-value" id="blockRate">0%</span>
                     <span class="card-label">Block Rate</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Controls -->
+        <section class="controls-row">
+            <!-- API Tester -->
+            <div class="control-panel">
+                <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg> Live API Tester</h2>
+                <div class="api-tester">
+                    <div class="input-group">
+                        <label>API Key</label>
+                        <select id="apiKeySelect">
+                            <option value="">None (IP-based)</option>
+                            <option value="free-key-1" selected>free-key-1 (FREE)</option>
+                            <option value="free-key-2">free-key-2 (FREE)</option>
+                            <option value="premium-key-1">premium-key-1 (PREMIUM)</option>
+                            <option value="admin-key-1">admin-key-1 (ADMIN)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Endpoint</label>
+                        <select id="endpointSelect">
+                            <option value="/api/data">/api/data</option>
+                            <option value="/api/health">/api/health</option>
+                            <option value="/api/resource">/api/resource</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="sendRequestBtn" onclick="sendSingleRequest()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                        Send Request
+                    </button>
+                    <div class="response-box" id="responseBox">
+                        <span class="placeholder">Response will appear here…</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Burst Simulator -->
+            <div class="control-panel">
+                <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg> Burst Simulator</h2>
+                <div class="burst-sim">
+                    <div class="input-group">
+                        <label>Number of Requests</label>
+                        <input type="range" id="burstCount" min="5" max="100" value="35"
+                            oninput="document.getElementById('burstCountVal').textContent = this.value">
+                        <span class="range-value" id="burstCountVal">35</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Delay Between (ms)</label>
+                        <input type="range" id="burstDelay" min="0" max="500" step="10" value="50"
+                            oninput="document.getElementById('burstDelayVal').textContent = this.value + 'ms'">
+                        <span class="range-value" id="burstDelayVal">50ms</span>
+                    </div>
+                    <button class="btn btn-warning" id="burstBtn" onclick="startBurst()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                        Simulate Burst
+                    </button>
+                    <div class="burst-progress" id="burstProgress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="burst-stats">
+                            <span id="burstAllowed" class="stat-allowed">✓ 0</span>
+                            <span id="burstBlocked" class="stat-blocked">✗ 0</span>
+                            <span id="burstPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Algorithm Switcher -->
+            <div class="control-panel">
+                <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg> Configuration</h2>
+                <div class="config-section">
+                    <div class="input-group">
+                        <label>Active Algorithm</label>
+                        <div class="algo-buttons">
+                            <button class="algo-btn active" data-algo="TOKEN_BUCKET"
+                                onclick="switchAlgorithm('TOKEN_BUCKET')">Token Bucket</button>
+                            <button class="algo-btn" data-algo="FIXED_WINDOW"
+                                onclick="switchAlgorithm('FIXED_WINDOW')">Fixed Window</button>
+                            <button class="algo-btn" data-algo="SLIDING_WINDOW"
+                                onclick="switchAlgorithm('SLIDING_WINDOW')">Sliding Window</button>
+                        </div>
+                    </div>
+                    <div class="plan-rules" id="planRules">
+                        <div class="plan-chip free">FREE: 30 req/min</div>
+                        <div class="plan-chip premium">PREMIUM: 200 req/min</div>
+                        <div class="plan-chip admin">ADMIN: 1000 req/min</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -94,18 +227,24 @@
                     </tr>
                 </thead>
                 <tbody id="topUsersBody">
-                    <tr><td colspan="6" class="empty-state">Waiting for data…</td></tr>
+                    <tr>
+                        <td colspan="6" class="empty-state">Send some requests to see data here…</td>
+                    </tr>
                 </tbody>
             </table>
         </section>
 
         <!-- Footer -->
         <footer class="footer">
-            <span>Auto-refreshes every 5 seconds</span>
+            <span>Auto-refreshes every 3 seconds • Built with Spring Boot + Chart.js</span>
             <span id="lastUpdate">Last update: —</span>
         </footer>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script src="/js/dashboard.js"></script>
 </body>
+
 </html>
